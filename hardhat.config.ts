@@ -57,9 +57,6 @@ const config: HardhatUserConfig = {
     }
   },
   networks: {
-    kovan: getCommonNetworkConfig(eEthereumNetwork.kovan, 42),
-    ropsten: getCommonNetworkConfig(eEthereumNetwork.ropsten,3),
-    rinkeby: getCommonNetworkConfig(eEthereumNetwork.rinkeby, 4),
     goerli: getCommonNetworkConfig(eEthereumNetwork.goerli, 5),
     ethereum: getCommonNetworkConfig(eEthereumNetwork.main, 1),
     matic: getCommonNetworkConfig(ePolygonNetwork.matic, 80001),

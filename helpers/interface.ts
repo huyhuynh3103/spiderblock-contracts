@@ -1,8 +1,5 @@
 import { eEthereumNetwork, eBSCNetwork, ePolygonNetwork, eOptimismNetwork } from './types';
 export interface iEthereumParamsNetwork <T> {
-    [eEthereumNetwork.ropsten]: T,
-    [eEthereumNetwork.rinkeby]: T,
-    [eEthereumNetwork.kovan]: T,
     [eEthereumNetwork.goerli]: T,
     [eEthereumNetwork.coverage]: T,
     [eEthereumNetwork.main]: T,

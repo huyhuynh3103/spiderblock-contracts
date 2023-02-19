@@ -5,9 +5,6 @@ export type eNetwork = eEthereumNetwork
     | ePolygonNetwork
 
 export enum eEthereumNetwork {
-    kovan = 'kovan',
-    ropsten = 'ropsten',
-    rinkeby = 'rinkeby',
     goerli = 'goerli',
     main = 'ethereum',
     hardhat = 'hardhat',

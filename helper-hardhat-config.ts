@@ -5,15 +5,7 @@ const INFURA_KEY = process.env.INFURA_KEY || '';
 const ALCHEMY_KEY = process.env.ALCHEMY_KEY || '';
 
 export const NETWORKS_RPC_URL: iParamsPerNetworkAll<string> = {
-  [eEthereumNetwork.kovan]: ALCHEMY_KEY
-    ? `https://eth-kovan.alchemyapi.io/v2/${ALCHEMY_KEY}`
-    : `https://kovan.infura.io/v3/${INFURA_KEY}`,
-  [eEthereumNetwork.ropsten]: ALCHEMY_KEY
-    ? `https://eth-ropsten.alchemyapi.io/v2/${ALCHEMY_KEY}`
-    : `https://ropsten.infura.io/v3/${INFURA_KEY}`,
-  [eEthereumNetwork.rinkeby]: ALCHEMY_KEY
-    ? `https://eth-rinkeby.alchemyapi.io/v2/${ALCHEMY_KEY}`
-    : `https://rinkeby.infura.io/v3/${INFURA_KEY}`,
+
   [eEthereumNetwork.goerli]: ALCHEMY_KEY
     ? `https://eth-goerli.alchemyapi.io/v2/${ALCHEMY_KEY}`
     : `https://goerli.infura.io/v3/${INFURA_KEY}`,
@@ -27,5 +19,5 @@ export const NETWORKS_RPC_URL: iParamsPerNetworkAll<string> = {
   [eOptimismNetwork.main]: `https://opt-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}`,
   [eOptimismNetwork.testnet]: `https://opt-kovan.g.alchemy.com/v2/${ALCHEMY_KEY}`,
   [eBSCNetwork.main]: 'https://bsc-dataseed1.binance.org/',
-  [eBSCNetwork.testnet]: 'https://bsc-testnet.public.blastapi.io'
+  [eBSCNetwork.testnet]: 'https://data-seed-prebsc-2-s2.binance.org:8545'
 } 
