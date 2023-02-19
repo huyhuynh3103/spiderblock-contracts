@@ -1,13 +1,11 @@
-# Sample Hardhat Project
-
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a script that deploys that contract.
-
-Try running some of the following tasks:
-
+# Hardhat Solidity Project
+This is project for deploying, verifying, upgrading smart contract on Ethereum/BSC/Optimism blockchain. 
+Using package: solhint, hardhat-contract-sizer, hardhat-gas-reporter, ... 
+To run or deploy contract
 ```shell
-npx hardhat help
-npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat run scripts/deploy.ts
+npm run deploy <networkName> // deploy contracts in scripts/deploy.ts
+npm run test // test contracts in test/*
+npm run clean // clean artifacts and cache
+npm run compile // compile all smart contracts
+npm run prettier // linting all project
 ```
