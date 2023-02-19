@@ -6,6 +6,7 @@
   "scripts": {
     "test": "npm run compile && hardhat test test/*.ts --network hardhat",
     "compile": "prettier --write ./contracts -l && hardhat compile && solhint --config ./.solhint.json -f table ./contracts/**/*.sol -f table ./contracts/*.sol",
+    "clean": "hardhat clean",
     "deploy:bscTest": "hardhat run --network bscTest scripts/deploy.ts",
     "deploy:bsc": "hardhat run --network bsc scripts/deploy.ts",
     "deploy:ethereum": "hardhat run --network ethereum scripts/deploy.ts",
@@ -44,6 +45,7 @@
     "hardhat-gas-reporter": "^1.0.9",
     "prettier": "^2.8.4",
     "prettier-plugin-solidity": "^1.1.2",
+    "solhint": "^3.4.0",
     "solidity-coverage": "^0.8.2",
     "ts-node": "^10.9.1",
     "tslint": "^6.1.3",
