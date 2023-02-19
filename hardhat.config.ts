@@ -1,6 +1,8 @@
 import "@nomicfoundation/hardhat-toolbox";
 import "@openzeppelin/hardhat-upgrades";
 import 'solidity-coverage';
+import 'hardhat-gas-reporter'
+
 import { eEthereumNetwork, eNetwork, ePolygonNetwork, eBSCNetwork } from './helpers/types';
 import { HardhatUserConfig, task } from "hardhat/config";
 import * as dotenv from "dotenv";
@@ -45,6 +47,9 @@ const config: HardhatUserConfig = {
         bytecodeHash: 'none',
       }
     },
+  },
+  gasReporter: {
+    enabled: process.env.REPORT_GAS ? true : false,
   },
   typechain: {
     outDir: 'typechain',
