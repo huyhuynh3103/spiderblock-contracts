@@ -1,5 +1,6 @@
 import "@nomicfoundation/hardhat-toolbox";
 import "@openzeppelin/hardhat-upgrades";
+import 'solidity-coverage';
 import { eEthereumNetwork, eNetwork, ePolygonNetwork, eBSCNetwork } from './helpers/types';
 import { HardhatUserConfig, task } from "hardhat/config";
 import * as dotenv from "dotenv";
