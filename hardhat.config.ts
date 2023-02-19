@@ -2,6 +2,7 @@ import "@nomicfoundation/hardhat-toolbox";
 import "@openzeppelin/hardhat-upgrades";
 import 'solidity-coverage';
 import 'hardhat-gas-reporter'
+import 'hardhat-contract-sizer'
 
 import { eEthereumNetwork, eNetwork, ePolygonNetwork, eBSCNetwork } from './helpers/types';
 import { HardhatUserConfig, task } from "hardhat/config";
@@ -53,6 +54,11 @@ const config: HardhatUserConfig = {
     currency: "USD",
     excludeContracts: [],
     src: "./contracts"
+  },
+  contractSizer: {
+    alphaSort: true,
+    runOnCompile: true,
+    disambiguatePaths: false
   },
   typechain: {
     outDir: 'typechain',
