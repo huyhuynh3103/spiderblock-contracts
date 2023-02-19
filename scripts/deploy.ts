@@ -1,32 +1,6 @@
-import { BigNumberish, Contract, ContractFactory, Signer } from "ethers";
-import { concat } from "ethers/lib/utils";
+import { Signer } from "ethers";
 import { ethers } from "hardhat";
-const deploy = async (
-  params: any[],
-  contractName: string,
-  contractSigner: Signer,
-  value?: BigNumberish
-) : Promise<Contract> => {
-  console.log(`\n Deploying ... \n`)
-  const contractFactory: ContractFactory = await ethers.getContractFactory(contractName)
-  const encodedParams = contractFactory.interface.encodeDeploy(params);
-  const bytecode = contractFactory.bytecode;
-  const tx = value === undefined ? {
-    data: concat([bytecode, encodedParams]),
-  }: {
-    data: concat([bytecode, encodedParams]),
-    value
-  }
-  const deployTx = await contractSigner.sendTransaction(tx);
-  console.log(`Tx submited - txHash:           ${deployTx.hash}`);
-  const contractTransaction = await deployTx.wait();
-  const contractInstance = await contractFactory.attach(contractTransaction.contractAddress);
-  console.log(`Contract address:               ${contractTransaction.contractAddress}`);
-  console.log(`Contract deployment tx:         ${contractTransaction.transactionHash}`);
-  console.log(`Contract deployed from:         ${contractTransaction.from}`);
-  console.log(``);
-  return contractInstance;
-}
+import { deploy } from "../helpers/deploy";
 async function main() {
   const contractSigner: Signer = ethers.provider.getSigner();
 

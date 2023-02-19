@@ -1,7 +1,8 @@
+import "@nomicfoundation/hardhat-toolbox";
+import "@openzeppelin/hardhat-upgrades";
 import { eEthereumNetwork, eNetwork, ePolygonNetwork, eBSCNetwork } from './helpers/types';
 import { HardhatUserConfig, task } from "hardhat/config";
 import * as dotenv from "dotenv";
-import "@nomicfoundation/hardhat-toolbox";
 import { NETWORKS_RPC_URL } from './helper-hardhat-config';
 import { HttpNetworkAccountsUserConfig, NetworkUserConfig } from 'hardhat/types';
 import { accounts } from './helpers/test-wallets';
