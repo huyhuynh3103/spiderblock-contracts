@@ -18,7 +18,11 @@
     "verify:goerli": "hardhat verify --network goerli",
     "verify:ethereum": "hardhat verify --network ethereum",
     "coverage": "npx hardhat coverage --testfiles  'test/emptyrun.coverage.ts' && npx hardhat coverage --testfiles  'test/*.spec.ts'",
-    "size": "hardhat size-contracts"
+    "size": "hardhat size-contracts",
+    "prettier": "prettier --write \"**/*.{js,json,md,sol,ts,yml}\"",
+    "prettier:check": "npx prettier -c \"**/*.{js,json,md,sol,ts,yml}\"",
+    "sol:prettier": "prettier --write ./contracts -l",
+    "sol:lint": "prettier --list-different ./contracts/**/*.sol"
   },
   "author": "",
   "license": "ISC",
@@ -37,6 +41,8 @@
     "hardhat": "^2.12.7",
     "hardhat-contract-sizer": "^2.8.0",
     "hardhat-gas-reporter": "^1.0.9",
+    "prettier": "^2.8.4",
+    "prettier-plugin-solidity": "^1.1.2",
     "solidity-coverage": "^0.8.2",
     "ts-node": "^10.9.1",
     "typechain": "^8.1.1",

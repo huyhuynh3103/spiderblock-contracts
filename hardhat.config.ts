@@ -1,40 +1,50 @@
 import "@nomicfoundation/hardhat-toolbox";
 import "@openzeppelin/hardhat-upgrades";
-import 'solidity-coverage';
-import 'hardhat-gas-reporter'
-import 'hardhat-contract-sizer'
+import "solidity-coverage";
+import "hardhat-gas-reporter";
+import "hardhat-contract-sizer";
 
-import { eEthereumNetwork, eNetwork, ePolygonNetwork, eBSCNetwork } from './helpers/types';
+import {
+  eEthereumNetwork,
+  eNetwork,
+  ePolygonNetwork,
+  eBSCNetwork,
+} from "./helpers/types";
 import { HardhatUserConfig, task } from "hardhat/config";
 import * as dotenv from "dotenv";
-import { NETWORKS_RPC_URL } from './helper-hardhat-config';
-import { HttpNetworkAccountsUserConfig, NetworkUserConfig } from 'hardhat/types';
-import { accounts } from './helpers/test-wallets';
+import { NETWORKS_RPC_URL } from "./helper-hardhat-config";
+import {
+  HttpNetworkAccountsUserConfig,
+  NetworkUserConfig,
+} from "hardhat/types";
+import { accounts } from "./helpers/test-wallets";
 
 dotenv.config();
 
-const PRIVATE_KEY = process.env.PRIVATE_KEY || '';
+const PRIVATE_KEY = process.env.PRIVATE_KEY || "";
 const MNEMONIC_PATH = "m/44'/60'/0'/0"; // BIP44: used for creating ERC20 standard tokenomic, such as Ethereum
-const MNEMONIC = process.env.MNEMONIC || ''
-const BSCSCAN_API_KEY = process.env.BSCSCAN_API_KEY || ''
-const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY || ''
+const MNEMONIC = process.env.MNEMONIC || "";
+const BSCSCAN_API_KEY = process.env.BSCSCAN_API_KEY || "";
+const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY || "";
 
-
-const accountsToUse : HttpNetworkAccountsUserConfig  = 
-  PRIVATE_KEY === '' 
+const accountsToUse: HttpNetworkAccountsUserConfig =
+  PRIVATE_KEY === ""
     ? {
-      mnemonic: MNEMONIC,
-      path: MNEMONIC_PATH,
-      initialIndex: 0,
-      count: 20
-    } : [PRIVATE_KEY]
+        mnemonic: MNEMONIC,
+        path: MNEMONIC_PATH,
+        initialIndex: 0,
+        count: 20,
+      }
+    : [PRIVATE_KEY];
 
-const getCommonNetworkConfig = (networkName: eNetwork, chainId: number): NetworkUserConfig => ({
+const getCommonNetworkConfig = (
+  networkName: eNetwork,
+  chainId: number
+): NetworkUserConfig => ({
   url: NETWORKS_RPC_URL[networkName],
   chainId,
   accounts: accountsToUse,
 });
-
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -42,35 +52,35 @@ const config: HardhatUserConfig = {
     settings: {
       optimizer: {
         enabled: true,
-        runs: 1_000_000
+        runs: 1_000_000,
       },
       metadata: {
-        bytecodeHash: 'none',
-      }
+        bytecodeHash: "none",
+      },
     },
   },
   gasReporter: {
     enabled: process.env.REPORT_GAS ? true : false,
     currency: "USD",
     excludeContracts: [],
-    src: "./contracts"
+    src: "./contracts",
   },
   contractSizer: {
     alphaSort: true,
     runOnCompile: true,
-    disambiguatePaths: false
+    disambiguatePaths: false,
   },
   typechain: {
-    outDir: 'typechain',
-    target: 'ethers-v5'
+    outDir: "typechain",
+    target: "ethers-v5",
   },
-  etherscan : {
+  etherscan: {
     apiKey: {
       bscTestnet: BSCSCAN_API_KEY,
       bsc: BSCSCAN_API_KEY,
       ethereum: ETHERSCAN_API_KEY,
-      goerli: ETHERSCAN_API_KEY
-    }
+      goerli: ETHERSCAN_API_KEY,
+    },
   },
   networks: {
     goerli: getCommonNetworkConfig(eEthereumNetwork.goerli, 5),
@@ -78,22 +88,23 @@ const config: HardhatUserConfig = {
     matic: getCommonNetworkConfig(ePolygonNetwork.matic, 80001),
     mumbai: getCommonNetworkConfig(ePolygonNetwork.mumbai, 100),
     hardhat: {
-      accounts: accounts.map(({ secretKey, balance }: { secretKey: string; balance: string }) => ({
-        privateKey: secretKey,
-        balance,
-      })),
+      accounts: accounts.map(
+        ({ secretKey, balance }: { secretKey: string; balance: string }) => ({
+          privateKey: secretKey,
+          balance,
+        })
+      ),
       throwOnTransactionFailures: true,
       throwOnCallFailures: true,
     },
     bsc: getCommonNetworkConfig(eBSCNetwork.main, 56),
-    bscTest: getCommonNetworkConfig(eBSCNetwork.testnet, 97)
-
-  }
+    bscTest: getCommonNetworkConfig(eBSCNetwork.testnet, 97),
+  },
 };
 task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
   const accounts = await hre.ethers.getSigners();
-  for(const account of accounts){
-    console.log(account.address)
+  for (const account of accounts) {
+    console.log(account.address);
   }
-})
+});
 export default config;

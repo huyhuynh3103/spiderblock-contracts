@@ -10,7 +10,7 @@ async function main() {
 
   const lockedAmount = ethers.utils.parseEther("0.0001");
 
-  await deploy([unlockTime], 'Lock', contractSigner, lockedAmount);
+  await deploy([unlockTime], "Lock", contractSigner, lockedAmount);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
