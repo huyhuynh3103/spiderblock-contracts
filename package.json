@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "npm run compile && hardhat test test/*.ts --network hardhat",
-    "compile": "prettier --write ./contracts -l && hardhat compile && solhint --config ./.solhint.json -f table ./contracts/**/*.sol -f table ./contracts/*.sol",
+    "compile": "prettier --write ./contracts -l && hardhat compile && solhint -f table ./contracts/**/*.sol -f table ./contracts/*.sol",
     "clean": "hardhat clean",
     "deploy:bscTest": "hardhat run --network bscTest scripts/deploy.ts",
     "deploy:bsc": "hardhat run --network bsc scripts/deploy.ts",
@@ -18,7 +18,7 @@
     "verify:bscTest": "hardhat verify --network bscTest",
     "verify:bsc": "hardhat verify --network bsc",
     "verify:goerli": "hardhat verify --network goerli",
-    "verify:ethereum": "hardhat verify --network ethereum",
+    "verify:mainnet": "hardhat verify --network mainnet",
     "coverage": "npx hardhat coverage --testfiles  'test/emptyrun.coverage.ts' && npx hardhat coverage --testfiles  'test/*.spec.ts'",
     "size": "hardhat size-contracts",
     "prettier": "prettier --write \"**/*.{js,json,md,sol,ts,yml}\"",

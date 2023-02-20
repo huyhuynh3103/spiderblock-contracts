@@ -7,7 +7,7 @@ import {
 export interface iEthereumParamsNetwork<T> {
   [eEthereumNetwork.goerli]: T;
   [eEthereumNetwork.coverage]: T;
-  [eEthereumNetwork.main]: T;
+  [eEthereumNetwork.mainnet]: T;
   [eEthereumNetwork.hardhat]: T;
 }
 export interface iBSCParamsNetwork<T> {

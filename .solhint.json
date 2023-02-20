@@ -8,6 +8,7 @@
     "avoid-sha3": "warn",
     "var-name-mixedcase": "none",
     "prettier/prettier": "error",
+    "no-empty-blocks": "none",
     "compiler-version": [
       "error",
       "^0.8.17"

@@ -6,13 +6,13 @@ export type eNetwork =
 
 export enum eEthereumNetwork {
   goerli = "goerli",
-  main = "ethereum",
+  mainnet = "mainnet",
   hardhat = "hardhat",
   coverage = "coverage",
 }
 export enum eBSCNetwork {
   main = "bsc",
-  testnet = "testnet-bsc",
+  testnet = "bscTestnet",
 }
 export enum eOptimismNetwork {
   main = "optimistic",

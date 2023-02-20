@@ -78,13 +78,13 @@ const config: HardhatUserConfig = {
     apiKey: {
       bscTestnet: BSCSCAN_API_KEY,
       bsc: BSCSCAN_API_KEY,
-      ethereum: ETHERSCAN_API_KEY,
+      mainnet: ETHERSCAN_API_KEY,
       goerli: ETHERSCAN_API_KEY,
     },
   },
   networks: {
     goerli: getCommonNetworkConfig(eEthereumNetwork.goerli, 5),
-    ethereum: getCommonNetworkConfig(eEthereumNetwork.main, 1),
+    mainnet: getCommonNetworkConfig(eEthereumNetwork.mainnet, 1),
     matic: getCommonNetworkConfig(ePolygonNetwork.matic, 80001),
     mumbai: getCommonNetworkConfig(ePolygonNetwork.mumbai, 100),
     hardhat: {
