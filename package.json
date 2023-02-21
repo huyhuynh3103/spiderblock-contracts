@@ -4,7 +4,7 @@
   "description": "This is smart contract for deploy tokennomic ERC-20 standard  for fauceting",
   "main": "index.js",
   "scripts": {
-    "test": "npm run compile && hardhat test test/*.ts --network hardhat",
+    "test": "hardhat test --network hardhat",
     "compile": "prettier --write ./contracts -l && hardhat compile && solhint -f table ./contracts/**/*.sol -f table ./contracts/*.sol",
     "clean": "hardhat clean",
     "deploy:bscTest": "hardhat run --network bscTest scripts/deploy.ts",
