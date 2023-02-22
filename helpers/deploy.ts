@@ -1,6 +1,7 @@
 import { BigNumberish, Contract, ContractFactory, Signer } from "ethers";
 import { concat } from "ethers/lib/utils";
-import { ethers, upgrades } from "hardhat";
+import { ethers, hardhatArguments, upgrades } from "hardhat";
+import ConfigFile from "./config";
 // Deploy directly
 const deployDirect = async (
   params: any[],
@@ -26,9 +27,11 @@ const deploy = async (
   params: any[],
   contractName: string,
   contractSigner: Signer,
+  config?:ConfigFile,
   value?: BigNumberish
 ): Promise<Contract> => {
-  console.log(`\n Deploying ... \n`);
+  const network = hardhatArguments.network ? hardhatArguments.network : 'dev';
+  console.log(`\n Deploying ${contractName} on ${network} ... \n`);
   const contractFactory: ContractFactory = await ethers.getContractFactory(
     contractName
   );
@@ -49,6 +52,9 @@ const deploy = async (
   const contractInstance = await contractFactory.attach(
     contractTransaction.contractAddress
   );
+  if(config){
+	config.setConfig(network + `.${contractName}`,contractTransaction.contractAddress);
+  }
   console.log(
     `Contract address:               ${contractTransaction.contractAddress}`
   );
