@@ -9,6 +9,8 @@
     "var-name-mixedcase": "none",
     "prettier/prettier": "error",
     "no-empty-blocks": "none",
+	"no-console": "none",
+	"no-global-import": "none",
     "compiler-version": [
       "error",
       "^0.8.17"
