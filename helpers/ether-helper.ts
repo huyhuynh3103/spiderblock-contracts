@@ -1,4 +1,4 @@
-import { ethers } from "hardhat";
+import { ethers } from "ethers";
 
 export function parseEther (amount: Number) {
 	return ethers.utils.parseUnits(amount.toString(), 18);

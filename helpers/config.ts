@@ -8,7 +8,7 @@ class ConfigFile {
 		console.log(`\nInit config ...\n`);
 		this.config = JSON.parse((await fs.readFile(CONFIG_FILE_PATH)).toString());
 	}
-	public async setConfig(path: string, val: string) {
+	public async setConfig(path: string, val: any) {
 		console.log(`\nSet config.json ...\n`)
 		const splitPath = path.split('.').reverse();
 		var ref = this.config;

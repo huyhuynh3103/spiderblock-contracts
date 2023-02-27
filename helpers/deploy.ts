@@ -53,7 +53,16 @@ const deploy = async (
     contractTransaction.contractAddress
   );
   if(config){
-	config.setConfig(network + `.${contractName}`,contractTransaction.contractAddress);
+	const configData = {
+		contract: contractTransaction.contractAddress,
+		params: params.map(param => {
+			if(param instanceof ethers.BigNumber){
+				return param.toString()
+			}
+			return param
+		})
+	}
+	config.setConfig(`${network}.${contractName}`,configData);
   }
   console.log(
     `Contract address:               ${contractTransaction.contractAddress}`

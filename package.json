@@ -17,7 +17,7 @@
     "upgrade:bscTest": "hardhat run --network bscTest scripts/upgrade.ts",
     "upgrade:goerli": "hardhat run --network goerli scripts/upgrade.ts",
     "upgrade:ethereum": "hardhat run --network ethereum scripts/upgrade.ts",
-	"verify": "hardhat verify --network",
+	"verify:argument": "hardhat verify --constructor-args arguments.json --network",
     "verify:bscTest": "hardhat verify --network bscTest",
     "verify:bsc": "hardhat verify --network bsc",
     "verify:goerli": "hardhat verify --network goerli",
@@ -27,7 +27,8 @@
     "prettier": "prettier --write \"**/*.{js,json,md,sol,ts,yml}\"",
     "prettier:check": "npx prettier -c \"**/*.{js,json,md,sol,ts,yml}\"",
     "sol:prettier": "prettier --write ./contracts -l",
-    "sol:lint": "prettier --list-different ./contracts/**/*.sol"
+    "sol:lint": "prettier --list-different ./contracts/**/*.sol",
+	"interact": "ts-node scripts/interaction.ts"
   },
   "author": "",
   "license": "ISC",

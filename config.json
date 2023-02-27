@@ -1,8 +1,25 @@
 {
   "dev": {},
   "bscTest": {
-    "Floppy": "0xf10d0939cc62C8A8722C475D3cA7d1101B052657",
-    "Vault": "0x47756455E803750f9a3A8DFE681064d294a83Ab5"
+    "Floppy": {
+      "contract": "0x05aaC2511776b97b545773d7E780b718164d6eA5",
+      "params": []
+    },
+    "Vault": "0x47756455E803750f9a3A8DFE681064d294a83Ab5",
+    "USDT": {
+      "contract": "0xE1937cAcDA6C1f341c11626193bDff3a2eb3429E",
+      "params": []
+    },
+    "FLPCrowdsale": {
+      "contract": "0xeb8b938Dc941f2F1Ba1D5b0b44Afa056d5b79222",
+      "params": [
+        "50000000000000000000",
+        "7000000000000000000000",
+        "0xE1937cAcDA6C1f341c11626193bDff3a2eb3429E",
+        "0x2a067B3b7254641173D50F6B811A5EA91B133066",
+        "0x05aaC2511776b97b545773d7E780b718164d6eA5"
+      ]
+    }
   },
   "main": {}
 }
