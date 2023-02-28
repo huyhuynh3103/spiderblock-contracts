@@ -2,11 +2,15 @@ import { BigNumberish } from "ethers";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
-import { ethers } from "hardhat";
-import { parseEther } from "../helpers/ether-helper";
+import { ethers, upgrades } from "hardhat";
+import { parseEther, keccak256 } from "../helpers/ether-helper";
 import { Contract } from "ethers";
 import constants from "../helpers/constants";
 describe("FLPCrowdSale", function () {
+  const DEFAULT_ADMIN_ROLE = "0x0000000000000000000000000000000000000000000000000000000000000000";
+  const WITHDRAWER_ROLE = keccak256("WITHDRAWER_ROLE");
+  const PAUSER_ROLE = keccak256("PAUSER_ROLE");
+  const UPGRADER_ROLE = keccak256("UPGRADER_ROLE");
   async function deployFLPCrowdSaleFixture() {
     const [deployer, receiver] = await ethers.getSigners();
     const paymentTokenFactory = await ethers.getContractFactory(
@@ -25,16 +29,14 @@ describe("FLPCrowdSale", function () {
       "FLPCrowdsale",
       deployer
     );
-    const crowdSaleContract: Contract = await crowdSaleFactory.deploy(
-      // all rate must supply 10,000 before setting state of contract
-      // purpose: convert from 0,000x => x
-      // in contract must divide to 10_000
-      nativeRate * constants.PERCENTAGE_FRACTION,
-      tokenRate * constants.PERCENTAGE_FRACTION,
-      paymentTokenContract.address,
-      receiver.address,
-      icoTokenContract.address
-    );
+	const params = [
+		nativeRate * constants.PERCENTAGE_FRACTION,
+		tokenRate * constants.PERCENTAGE_FRACTION,
+		paymentTokenContract.address,
+		receiver.address,
+		icoTokenContract.address
+	]
+    const crowdSaleContract: Contract = await upgrades.deployProxy(crowdSaleFactory, params);
     await crowdSaleContract.deployed();
     return {
       owner: deployer,
@@ -87,15 +89,35 @@ describe("FLPCrowdSale", function () {
         receiver.address
       );
     });
-    it("set the deployer is owner of contract", async function () {
+    it("set the deployer has role admin", async function () {
       const { owner, crowdSaleContract } = await loadFixture(
         deployFLPCrowdSaleFixture
       );
-      expect(await crowdSaleContract.owner()).to.equal(owner.address);
+      expect(await crowdSaleContract.hasRole(DEFAULT_ADMIN_ROLE, owner.address)).to.equal(true);
+    });
+    it("set the deployer has role pauser", async function () {
+      const { owner, crowdSaleContract } = await loadFixture(
+        deployFLPCrowdSaleFixture
+      );
+      expect(await crowdSaleContract.hasRole(PAUSER_ROLE, owner.address)).to.equal(true);
+    });
+    it("set the deployer has role upgrader", async function () {
+      const { owner, crowdSaleContract } = await loadFixture(
+        deployFLPCrowdSaleFixture
+      );
+      expect(await crowdSaleContract.hasRole(UPGRADER_ROLE, owner.address)).to.equal(true);
+    });
+    it("set the deployer has role withdrawer", async function () {
+      const { owner, crowdSaleContract } = await loadFixture(
+        deployFLPCrowdSaleFixture
+      );
+      expect(await crowdSaleContract.hasRole(WITHDRAWER_ROLE, owner.address)).to.equal(true);
     });
   });
   describe("ACL call", function () {
-    const ERROR_NOT_OWNER = "Ownable: caller is not the owner";
+	const getErrorACL = (address: string, role: string) => {
+		return `AccessControl: account ${address.toLowerCase()} is missing role ${role}`
+	}
     let owner: SignerWithAddress,
       paymentTokenContract: Contract,
       crowdSaleContract: Contract;
@@ -114,15 +136,18 @@ describe("FLPCrowdSale", function () {
         mockToken = await mockTokenFactory.deploy();
         await mockToken.deployed();
       });
-      it("and caller is not owner => reverted", async function () {
+      it("and caller does not have admin role => reverted", async function () {
         const [, , caller] = await ethers.getSigners();
         await expect(
           crowdSaleContract.connect(caller).setPaymentToken(mockToken.address)
-        ).to.be.revertedWith(ERROR_NOT_OWNER);
+        ).to.be.revertedWith(getErrorACL(caller.address, DEFAULT_ADMIN_ROLE));
       });
-      it("and caller is owner => success", async function () {
-        await expect(
-          crowdSaleContract.connect(owner).setPaymentToken(mockToken.address)
+      it("and caller has role admin => success", async function () {
+        const [, , caller] = await ethers.getSigners();
+		const _grantTx = await crowdSaleContract.connect(owner).grantRole(DEFAULT_ADMIN_ROLE, caller.address)
+		await _grantTx.wait();
+		await expect(
+          crowdSaleContract.connect(caller).setPaymentToken(mockToken.address)
         )
           .to.emit(crowdSaleContract, "PaymentTokenChanged")
           .withArgs(mockToken.address);
@@ -136,14 +161,17 @@ describe("FLPCrowdSale", function () {
       beforeEach(function () {
         nativeRate = parseEther(0.5);
       });
-      it("and caller is not owner => reverted", async function () {
+      it("and caller doesn't have admin role => reverted", async function () {
         const [, , caller] = await ethers.getSigners();
         await expect(
           crowdSaleContract.connect(caller).setNativeRate(nativeRate)
-        ).to.be.revertedWith(ERROR_NOT_OWNER);
+        ).to.be.revertedWith(getErrorACL(caller.address, DEFAULT_ADMIN_ROLE));
       });
-      it("and caller is owner => success", async function () {
-        await expect(crowdSaleContract.connect(owner).setNativeRate(nativeRate))
+      it("and caller has admin role => success", async function () {
+        const [, , caller] = await ethers.getSigners();
+		const _grantTx = await crowdSaleContract.connect(owner).grantRole(DEFAULT_ADMIN_ROLE, caller.address)
+		await _grantTx.wait();
+        await expect(crowdSaleContract.connect(caller).setNativeRate(nativeRate))
           .to.emit(crowdSaleContract, "NativeRateChanged")
           .withArgs(nativeRate);
         expect(await crowdSaleContract.native_rate()).to.equal(nativeRate);
@@ -154,14 +182,17 @@ describe("FLPCrowdSale", function () {
       beforeEach(function () {
         tokenRate = parseEther(0.5);
       });
-      it("and caller is not owner => reverted", async function () {
+      it("and caller does not have admin role => reverted", async function () {
         const [, , caller] = await ethers.getSigners();
         await expect(
           crowdSaleContract.connect(caller).setTokenRate(tokenRate)
-        ).to.be.revertedWith(ERROR_NOT_OWNER);
+        ).to.be.revertedWith(getErrorACL(caller.address, DEFAULT_ADMIN_ROLE));
       });
-      it("and caller is owner => success", async function () {
-        await expect(crowdSaleContract.connect(owner).setTokenRate(tokenRate))
+      it("and caller has admin role => success", async function () {
+        const [, , caller] = await ethers.getSigners();
+		const _grantTx = await crowdSaleContract.connect(owner).grantRole(DEFAULT_ADMIN_ROLE, caller.address)
+		await _grantTx.wait();
+        await expect(crowdSaleContract.connect(caller).setTokenRate(tokenRate))
           .to.emit(crowdSaleContract, "TokenRateChanged")
           .withArgs(tokenRate);
         expect(await crowdSaleContract.token_rate()).to.equal(tokenRate);
@@ -172,15 +203,18 @@ describe("FLPCrowdSale", function () {
       beforeEach(async function () {
         [, , receiver] = await ethers.getSigners();
       });
-      it("and caller is not owner => rejected", async function () {
+      it("and caller does not have admin role => rejected", async function () {
         const [, , , caller] = await ethers.getSigners();
         await expect(
           crowdSaleContract.connect(caller).setReceiverAddress(receiver.address)
-        ).to.be.revertedWith(ERROR_NOT_OWNER);
+        ).to.be.revertedWith(getErrorACL(caller.address, DEFAULT_ADMIN_ROLE));
       });
-      it("and caller is owner => success", async function () {
+      it("and caller has admin role => success", async function () {
+        const [, , caller] = await ethers.getSigners();
+		const _grantTx = await crowdSaleContract.connect(owner).grantRole(DEFAULT_ADMIN_ROLE, caller.address)
+		await _grantTx.wait();
         await expect(
-          crowdSaleContract.connect(owner).setReceiverAddress(receiver.address)
+          crowdSaleContract.connect(caller).setReceiverAddress(receiver.address)
         )
           .to.emit(crowdSaleContract, "ReceiverAddressChanged")
           .withArgs(receiver.address);
@@ -191,51 +225,62 @@ describe("FLPCrowdSale", function () {
     });
     describe("withdrawNative()", function () {
       const ERROR_BALANCE_IS_ZERO = "Withdraw: Balance is zero";
-      it("and caller is not owner => rejected", async function () {
+      it("and caller does not have withdrawer role => rejected", async function () {
         const [, , , caller] = await ethers.getSigners();
         await expect(
           crowdSaleContract.connect(caller).withdrawNative()
-        ).to.be.revertedWith(ERROR_NOT_OWNER);
+        ).to.be.revertedWith(getErrorACL(caller.address, WITHDRAWER_ROLE));
       });
-      it("and balance is zero => rejected", async function () {
+      it("and caller has withdrawer role and balance is zero => rejected", async function () {
+        const [, , caller] = await ethers.getSigners();
+		const _grantTx = await crowdSaleContract.connect(owner).grantRole(WITHDRAWER_ROLE, caller.address)
+		await _grantTx.wait();
         await expect(
-          crowdSaleContract.connect(owner).withdrawNative()
+          crowdSaleContract.connect(caller).withdrawNative()
         ).to.be.revertedWith(ERROR_BALANCE_IS_ZERO);
       });
-      it("and caller is owner and balance is larger than zero => success", async function () {
-        const [, , , sender] = await ethers.getSigners();
+      it("and caller has withdrawer role and balance is larger than zero => success", async function () {
+        const [, , , sender, caller] = await ethers.getSigners();
+		const _grantTx = await crowdSaleContract.connect(owner).grantRole(WITHDRAWER_ROLE, caller.address)
+		await _grantTx.wait();
         await sender.sendTransaction({
           to: crowdSaleContract.address,
           value: 500,
         });
         await expect(
-          await crowdSaleContract.connect(owner).withdrawNative()
+          await crowdSaleContract.connect(caller).withdrawNative()
         ).to.changeEtherBalances(
-          [owner.address, crowdSaleContract.address],
+          [caller.address, crowdSaleContract.address],
           [+500, -500]
         );
       });
     });
     describe("withdrawToken()", function () {
       const ERROR_AMOUNT_TOKEN_IS_ZERO = "Withdraw: Token's amount is zero";
-      it("and caller is not owner => rejected", async function () {
+      it("and caller does not have withdrawer role => rejected", async function () {
         const [, , , caller] = await ethers.getSigners();
         await expect(
-          crowdSaleContract.connect(caller).withdrawToken()
-        ).to.be.revertedWith(ERROR_NOT_OWNER);
+          crowdSaleContract.connect(caller).withdrawNative()
+        ).to.be.revertedWith(getErrorACL(caller.address, WITHDRAWER_ROLE));
       });
-      it("and amount of token is zero => rejected", async function () {
+      it("and caller has withdrawer role and amount of token is zero => rejected", async function () {
+        const [, , caller] = await ethers.getSigners();
+		const _grantTx = await crowdSaleContract.connect(owner).grantRole(WITHDRAWER_ROLE, caller.address)
+		await _grantTx.wait();
         await expect(
-          crowdSaleContract.connect(owner).withdrawToken()
+          crowdSaleContract.connect(caller).withdrawToken()
         ).to.be.revertedWith(ERROR_AMOUNT_TOKEN_IS_ZERO);
       });
-      it("and caller is owner and amount of token is larger than zero => success", async function () {
+      it("and caller has withdrawer role and amount of token is larger than zero => success", async function () {
+        const [, , , caller] = await ethers.getSigners();
+		const _grantTx = await crowdSaleContract.connect(owner).grantRole(WITHDRAWER_ROLE, caller.address)
+		await _grantTx.wait();
         await paymentTokenContract.transfer(crowdSaleContract.address, 500);
         await expect(
-          await crowdSaleContract.connect(owner).withdrawToken()
+          await crowdSaleContract.connect(caller).withdrawToken()
         ).to.changeTokenBalances(
           paymentTokenContract,
-          [owner.address, crowdSaleContract.address],
+          [caller.address, crowdSaleContract.address],
           [+500, -500]
         );
       });

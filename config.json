@@ -2,22 +2,23 @@
   "dev": {},
   "bscTest": {
     "Floppy": {
-      "contract": "0x05aaC2511776b97b545773d7E780b718164d6eA5",
+      "contract": "0x91e1272Adb3804745aA35619843349573A49ECe7",
       "params": []
     },
     "Vault": "0x47756455E803750f9a3A8DFE681064d294a83Ab5",
     "USDT": {
-      "contract": "0xE1937cAcDA6C1f341c11626193bDff3a2eb3429E",
+      "contract": "0xec3FF8A5513E801e3137335C2A1A0D0b5A6ec2aa",
       "params": []
     },
     "FLPCrowdsale": {
-      "contract": "0xeb8b938Dc941f2F1Ba1D5b0b44Afa056d5b79222",
+      "proxy": "0xAcbbA758F452D53B1Dc174B9646CB8F3e0524dD1",
+      "implement": "0x3d492BC6B39D7D60bB1f95ed9438E378443877E3",
       "params": [
         "50000000000000000000",
         "7000000000000000000000",
-        "0xE1937cAcDA6C1f341c11626193bDff3a2eb3429E",
+        "0xec3FF8A5513E801e3137335C2A1A0D0b5A6ec2aa",
         "0x2a067B3b7254641173D50F6B811A5EA91B133066",
-        "0x05aaC2511776b97b545773d7E780b718164d6eA5"
+        "0x91e1272Adb3804745aA35619843349573A49ECe7"
       ]
     }
   },

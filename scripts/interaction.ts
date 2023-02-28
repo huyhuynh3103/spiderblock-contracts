@@ -14,8 +14,8 @@ async function interact() {
 		"https://data-seed-prebsc-1-s1.binance.org:8545"
 	);
 	const owner = new ethers.Wallet(privateKey, provider);
-	const crowdSaleContract = new ethers.Contract(config.bscTest.FLPCrowdsale, crowdSale.abi, owner);
-	const floppyContract = new ethers.Contract(config.bscTest.Floppy, floppy.abi, owner);
+	const crowdSaleContract = new ethers.Contract(config.bscTest.FLPCrowdsale.proxy, crowdSale.abi, owner);
+	const floppyContract = new ethers.Contract(config.bscTest.Floppy.contract, floppy.abi, owner);
 	// await floppyContract.connect(owner).transfer(crowdSaleContract.address, parseEther(5000));
 	const caller = new ethers.Wallet(callerPK, provider);
 	const tx = await crowdSaleContract.connect(caller).buyByNative({value: parseEther(0.001)})

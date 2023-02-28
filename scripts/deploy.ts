@@ -11,13 +11,13 @@ async function main() {
   	console.log(`Signer Address: ${await deployer.getAddress()}`)
   	const floppyToken = await deploy([],"Floppy", deployer, config);
 	const usdtToken = await deploy([], "USDT", deployer, config);
-	await deploy([
+	await deployProxy([
 		parseEther(0.005*constants.PERCENTAGE_FRACTION),
 		parseEther(0.7*constants.PERCENTAGE_FRACTION),
 		usdtToken.address,
 		"0x2a067B3b7254641173D50F6B811A5EA91B133066",
 		floppyToken.address
-	], "FLPCrowdsale", deployer, config);
+	], "FLPCrowdsale", config);
 	// await deploy([],"Vault",deployer,config);
 	await config.updateConfig();
 }

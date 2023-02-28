@@ -2,10 +2,14 @@
 pragma solidity ^0.8.17;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import "./libraries/Roles.sol";
 
-contract FLPCrowdsale is Ownable {
+contract FLPCrowdsale is Initializable, AccessControlUpgradeable, UUPSUpgradeable, PausableUpgradeable {
     uint256 public constant PERCENTAGE_FRACTION = 10_000;
 	uint256 public token_rate;
 	uint256 public native_rate;
@@ -15,46 +19,69 @@ contract FLPCrowdsale is Ownable {
 
 	using SafeERC20 for IERC20;
 
-	constructor(
+	/// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() {
+        _disableInitializers();
+    }
+
+    function initialize(
 		uint _nativeRate,
 		uint _tokenRate,
 		address _paymentToken,
 		address _receiver,
 		address _icoToken
-	) {
+	) initializer public {
 		native_rate = _nativeRate;
 		token_rate = _tokenRate;
 		payment_token = IERC20(_paymentToken);
 		receiver_address = _receiver;
 		ico_token = IERC20(_icoToken);
-	}
+        __AccessControl_init();
+        __UUPSUpgradeable_init();
+		address sender = _msgSender();
+
+        _grantRole(DEFAULT_ADMIN_ROLE, sender);
+		_grantRole(Roles.PAUSER_ROLE, sender);
+        _grantRole(Roles.UPGRADER_ROLE, sender);
+		_grantRole(Roles.WITHDRAWER_ROLE, sender);
+    }
+
 	event PaymentTokenChanged(IERC20 _newToken);
 	event TokenRateChanged(uint256 _newTokenRate);
 	event NativeRateChanged(uint256 _newNativeRate);
 	event ReceiverAddressChanged(address _newReceiver);
-	function setPaymentToken(IERC20 _newToken) external onlyOwner {
+
+	function pause() public onlyRole(Roles.PAUSER_ROLE) {
+        _pause();
+    }
+
+    function unpause() public onlyRole(Roles.PAUSER_ROLE) {
+        _unpause();
+    }
+
+	function setPaymentToken(IERC20 _newToken) external onlyRole(DEFAULT_ADMIN_ROLE) {
 		payment_token = _newToken;
 		emit PaymentTokenChanged(_newToken);
 	}
-	function setNativeRate(uint256 _nativeRate) external onlyOwner {
+	function setNativeRate(uint256 _nativeRate) external onlyRole(DEFAULT_ADMIN_ROLE) {
 		native_rate = _nativeRate;
 		emit NativeRateChanged(_nativeRate);
 	}
-	function setTokenRate(uint256 _tokenRate) external onlyOwner {
+	function setTokenRate(uint256 _tokenRate) external onlyRole(DEFAULT_ADMIN_ROLE) {
 		token_rate = _tokenRate;
 		emit TokenRateChanged(_tokenRate);
 	}
-	function setReceiverAddress(address _receiver) external onlyOwner {
+	function setReceiverAddress(address _receiver) external onlyRole(DEFAULT_ADMIN_ROLE) {
 		receiver_address = _receiver;
 		emit ReceiverAddressChanged(_receiver);
 	}
-	function withdrawNative() external onlyOwner {
+	function withdrawNative() external onlyRole(Roles.WITHDRAWER_ROLE) {
 		uint balance = address(this).balance;
 		require(balance>0, "Withdraw: Balance is zero");
 		(bool sent,) = payable(msg.sender).call{value: balance}("");
 		require(sent, "Failed to sent");
 	}
-	function withdrawToken() external onlyOwner {
+	function withdrawToken() external onlyRole(Roles.WITHDRAWER_ROLE) {
 		uint256 amountToken = payment_token.balanceOf(address(this));
 		require(amountToken > 0, "Withdraw: Token's amount is zero");
 		payment_token.safeTransfer(_msgSender(), amountToken);
@@ -89,4 +116,10 @@ contract FLPCrowdsale is Ownable {
 		}
 	}
 	receive() external payable {}
+    
+	function _authorizeUpgrade(address newImplementation)
+        internal
+        onlyRole(Roles.UPGRADER_ROLE)
+        override
+    {}
 }

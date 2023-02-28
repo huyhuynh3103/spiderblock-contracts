@@ -77,8 +77,11 @@ const deploy = async (
 
 const deployProxy = async (
   params: any[],
-  contractName: string
+  contractName: string,
+  config?:ConfigFile,
 ): Promise<Contract> => {
+  const network = hardhatArguments.network ? hardhatArguments.network : 'dev';
+  console.log(`\n Deploying proxy ${contractName} on ${network} ... \n`);
   const factory = await ethers.getContractFactory(contractName);
   const contractProxy: Contract = await upgrades.deployProxy(factory, params);
   const contractTransaction = contractProxy.deployTransaction;
@@ -87,6 +90,19 @@ const deployProxy = async (
   const implementAddress = await upgrades.erc1967.getImplementationAddress(
     contractProxy.address
   );
+  if(config){
+	const configData = {
+		proxy: contractProxy.address,
+		implement: implementAddress,
+		params: params.map(param => {
+			if(param instanceof ethers.BigNumber){
+				return param.toString()
+			}
+			return param
+		})
+	}
+	config.setConfig(`${network}.${contractName}`,configData);
+  }
   console.log(`Proxy address:                  ${contractProxy.address}`);
   console.log(`Implementation address:         ${implementAddress}`);
   console.log(`Contract deployment tx:         ${contractTransaction.hash}`);
