@@ -86,7 +86,7 @@ contract FLPCrowdsale is Initializable, AccessControlUpgradeable, UUPSUpgradeabl
 		require(amountToken > 0, "Withdraw: Token's amount is zero");
 		payment_token.safeTransfer(_msgSender(), amountToken);
 	}
-	function buyByNative() external payable {
+	function buyByNative() external whenNotPaused payable {
 		uint256 _nativeAmount = msg.value;
 		(bool success ,uint256 amountICOToken) = getICOTokenAmount(address(0), _nativeAmount);
 		assert(success);
@@ -96,7 +96,7 @@ contract FLPCrowdsale is Initializable, AccessControlUpgradeable, UUPSUpgradeabl
 		require(sent, "Failed to sent");
 		ico_token.safeTransfer(_msgSender(), amountICOToken);
 	}
-	function buyByToken(uint256 _amount) external {
+	function buyByToken(uint256 _amount) external whenNotPaused {
 		address caller = _msgSender();
 		require(payment_token.balanceOf(caller) >= _amount, "Insufficient account balance");
 		(bool success ,uint256 amountICOToken) = getICOTokenAmount(address(payment_token), _amount);

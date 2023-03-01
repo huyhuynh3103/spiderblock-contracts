@@ -11,14 +11,28 @@
       "params": []
     },
     "FLPCrowdsale": {
-      "proxy": "0xAcbbA758F452D53B1Dc174B9646CB8F3e0524dD1",
-      "implement": "0x3d492BC6B39D7D60bB1f95ed9438E378443877E3",
+      "proxy": "0xE2140f676F67Dd35a23183B8F85dBF3536C9848C",
+      "implement": "0xb0c30f82A957e2301E14FDe15490c6e1A3112092",
       "params": [
         "50000000000000000000",
         "7000000000000000000000",
         "0xec3FF8A5513E801e3137335C2A1A0D0b5A6ec2aa",
         "0x2a067B3b7254641173D50F6B811A5EA91B133066",
         "0x91e1272Adb3804745aA35619843349573A49ECe7"
+      ]
+    },
+    "Hero": {
+      "proxy": "0x0986e90fdEFF82ad872E6240149F29AFf68F9119",
+      "implement": "0x10b10f3994C481E903E9f509F463Add7aCd44A53",
+      "params": []
+    },
+    "HeroMarketplace": {
+      "proxy": "0x34CBd51bFFaB5277Ba9d4B17fFDD15BCB5D33167",
+      "implement": "0x22791F401907A8d2C3D304AD337f63f4F4DB739b",
+      "params": [
+        "0x0986e90fdEFF82ad872E6240149F29AFf68F9119",
+        "0x91e1272Adb3804745aA35619843349573A49ECe7",
+        "100000000000000000000000"
       ]
     }
   },

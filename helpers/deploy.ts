@@ -1,3 +1,4 @@
+import { DeployProxyOptions } from "@openzeppelin/hardhat-upgrades/dist/utils";
 import { BigNumberish, Contract, ContractFactory, Signer } from "ethers";
 import { concat } from "ethers/lib/utils";
 import { ethers, hardhatArguments, upgrades } from "hardhat";
@@ -79,11 +80,12 @@ const deployProxy = async (
   params: any[],
   contractName: string,
   config?:ConfigFile,
+  option: DeployProxyOptions = {kind: "uups", initializer: "initialize"}
 ): Promise<Contract> => {
   const network = hardhatArguments.network ? hardhatArguments.network : 'dev';
   console.log(`\n Deploying proxy ${contractName} on ${network} ... \n`);
   const factory = await ethers.getContractFactory(contractName);
-  const contractProxy: Contract = await upgrades.deployProxy(factory, params);
+  const contractProxy: Contract = await upgrades.deployProxy(factory, params, option);
   const contractTransaction = contractProxy.deployTransaction;
   console.log(`Tx submited - txHash:           ${contractTransaction.hash}`);
   await contractProxy.deployed();
