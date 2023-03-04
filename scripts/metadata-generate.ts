@@ -19,7 +19,7 @@ class MetadataGenerate {
       const newElement = {
         name: this.name,
         description: this.description,
-        image: `ipfs://${cidImage}${this.imageExt}`,
+        image: `ipfs://${cidImage}/${i}.${this.imageExt}`,
         attributes: [
           { trait_type: "Rarity", value: this.getRandom(3) },
           { trait_type: "Class", value: this.getRandom(3) },
@@ -51,7 +51,7 @@ const main = () => {
     desc: "Hero NFT is an test collections",
   });
   metadataHelper.writeImage(
-    "bafybeihjgifbqhuhwwc4eiiudi3h4agzw7pfhydiei5uj2yxpn3io7yxpe",
+    "QmdpxMc5u3r2mk7uUT1ip7MeVybuAM8aXKJmXnBRH8xv9n",
     28
   );
 };

@@ -29,7 +29,7 @@
     "sol:prettier": "prettier --write ./contracts -l",
     "sol:lint": "prettier --list-different ./contracts/**/*.sol",
 	"interact": "ts-node scripts/interaction.ts",
-	"save-metadata": "ts-node scripts/metadata-generate.ts"
+	"metadata": "ts-node scripts/metadata-generate.ts"
   },
   "author": "",
   "license": "ISC",
