@@ -48,6 +48,7 @@ contract HeroMarketplace is IERC721ReceiverUpgradeable, Initializable, PausableU
 		token = _token;
 		nft = _nft;
 		tax = _tax;
+		
 		address sender = msg.sender;
         __Pausable_init();
         __AccessControl_init();

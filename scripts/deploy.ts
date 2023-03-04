@@ -13,8 +13,8 @@ async function main() {
   	
 	// deploy contract script 
 	await deployProxy([
-		"0x0986e90fdEFF82ad872E6240149F29AFf68F9119",
 		"0x91e1272Adb3804745aA35619843349573A49ECe7",
+		"0x0986e90fdEFF82ad872E6240149F29AFf68F9119",
 		parseEther(10*constants.PERCENTAGE_FRACTION)
 	], "HeroMarketplace", config);	
 	// update config

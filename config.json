@@ -27,11 +27,11 @@
       "params": []
     },
     "HeroMarketplace": {
-      "proxy": "0x34CBd51bFFaB5277Ba9d4B17fFDD15BCB5D33167",
+      "proxy": "0xB1b5428D4e78D40e1c95dD5a2EC87aC924C33552",
       "implement": "0x22791F401907A8d2C3D304AD337f63f4F4DB739b",
       "params": [
-        "0x0986e90fdEFF82ad872E6240149F29AFf68F9119",
         "0x91e1272Adb3804745aA35619843349573A49ECe7",
+        "0x0986e90fdEFF82ad872E6240149F29AFf68F9119",
         "100000000000000000000000"
       ]
     }

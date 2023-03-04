@@ -1,7 +1,7 @@
 import { upgradeProxy } from "../helpers/upgrade";
 
 async function main(): Promise<void> {
-	upgradeProxy("FLPCrowdsale")
+	upgradeProxy("HeroMarketplace")
 }
 
 main().catch((error)=>{
