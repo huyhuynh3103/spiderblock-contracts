@@ -84,6 +84,9 @@ contract HeroMarketplace is IERC721ReceiverUpgradeable, Initializable, PausableU
 		ListDetail[] memory myNft = new ListDetail[](balance);
 		for(uint i=0;i<balance;){
 			myNft[i] = listDetail[nft.tokenOfOwnerByIndex(address(this), i)];
+			unchecked {
+				++i;
+			}
 		}
 		return myNft;
 	}
