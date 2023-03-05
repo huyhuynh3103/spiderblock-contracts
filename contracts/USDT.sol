@@ -14,10 +14,7 @@ contract USDT is ERC20("USDT", "USDT"), ERC20Burnable, Ownable {
     }
 
     function mint(address to, uint256 amount) public onlyOwner {
-        require(
-            ERC20.totalSupply() + amount <= cap,
-            "USDT: cap exceeded"
-        );
+        require(ERC20.totalSupply() + amount <= cap, "USDT: cap exceeded");
         _mint(to, amount);
     }
 }
