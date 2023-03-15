@@ -29,11 +29,13 @@
     "sol:prettier": "prettier --write ./contracts -l",
     "sol:lint": "prettier --list-different ./contracts/**/*.sol",
     "interact": "ts-node scripts/interaction.ts",
-    "metadata": "ts-node scripts/metadata-generate.ts"
+    "metadata": "ts-node scripts/metadata-generate.ts",
+    "storage": "hardhat check"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@chainlink/contracts": "^0.6.1",
     "@nomicfoundation/hardhat-network-helpers": "^1.0.8",
     "@nomicfoundation/hardhat-toolbox": "^2.0.1",
     "@nomiclabs/hardhat-ethers": "^2.2.2",
@@ -54,6 +56,7 @@
     "hardhat": "^2.12.7",
     "hardhat-contract-sizer": "^2.8.0",
     "hardhat-gas-reporter": "^1.0.9",
+    "hardhat-storage-layout": "^0.1.7",
     "prettier": "^2.8.4",
     "prettier-plugin-solidity": "^1.1.2",
     "solhint": "^3.4.0",

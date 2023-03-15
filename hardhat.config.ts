@@ -3,6 +3,7 @@ import "@openzeppelin/hardhat-upgrades";
 import "solidity-coverage";
 import "hardhat-gas-reporter";
 import "hardhat-contract-sizer";
+import "hardhat-storage-layout";
 
 import {
   eEthereumNetwork,
