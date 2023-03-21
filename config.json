@@ -7,7 +7,8 @@
     },
     "Vault": "0x47756455E803750f9a3A8DFE681064d294a83Ab5",
     "USDT": {
-      "contract": "0xec3FF8A5513E801e3137335C2A1A0D0b5A6ec2aa",
+      "proxy": "0xEaa83Cf59544E2a111a76c58691e1D08C1b38356",
+      "implement": "0x226E7B734CA0Fb14221cf38EE733B2746f6d1F0e",
       "params": []
     },
     "FLPCrowdsale": {
