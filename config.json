@@ -43,6 +43,14 @@
         "0x91e1272Adb3804745aA35619843349573A49ECe7",
         "0x0986e90fdEFF82ad872E6240149F29AFf68F9119"
       ]
+    },
+    "Faucet": {
+      "proxy": "0x8cE51b4A6e1d23BAa68AB6E2Acd0dc447b7E3102",
+      "implement": "0xB26F1f33769A5C7B27D3A6930Ab2F41d68185819",
+      "params": [
+        "0xEaa83Cf59544E2a111a76c58691e1D08C1b38356",
+        "10000000000000000000"
+      ]
     }
   },
   "main": {}

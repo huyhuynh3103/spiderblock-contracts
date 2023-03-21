@@ -12,7 +12,10 @@ async function main() {
   	console.log(`Signer Address: ${await deployer.getAddress()}`)
   	
 	// deploy contract script 
-	await deployProxy([], "USDT", config);	
+	await deployProxy([
+		"0xEaa83Cf59544E2a111a76c58691e1D08C1b38356",
+		"10000000000000000000"
+	], "Faucet", config);	
 	
 
 	// update config
