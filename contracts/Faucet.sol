@@ -15,6 +15,7 @@ contract Faucet is Initializable, AccessControlUpgradeable, UUPSUpgradeable {
     IERC20Upgradeable public faucet_token;
 	uint public mint_amount;
 	mapping(address => uint) last_fauceting;
+	mapping(address => uint) last_faucet_to;
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
         _disableInitializers();
@@ -39,15 +40,23 @@ contract Faucet is Initializable, AccessControlUpgradeable, UUPSUpgradeable {
         address newImplementation
     ) internal virtual override {}
 
-	function createFaucet() external {
+	function createFaucet(address _addr) external {
 		address sender = _msgSender();
-		uint lastUpdated = last_fauceting[sender];
-		require(block.timestamp - lastUpdated > Constant.DAY_IN_TIMESTAMP, "Already faucet in same day");
-		(bool success, ) = address(faucet_token).call(abi.encodeWithSignature("mint(address,uint256)", sender, mint_amount));
+		uint lastRequest = last_fauceting[sender];
+		uint lastTo = last_faucet_to[_addr];
+		if(lastRequest != 0){
+			require(block.timestamp - lastRequest > Constant.DAY_IN_TIMESTAMP, "Sender faucet in same day");
+		}
+		if(lastTo != 0){
+			require(block.timestamp - lastTo > Constant.DAY_IN_TIMESTAMP, "Faucet to same address in same day");
+		}
+		
+		(bool success, ) = address(faucet_token).call(abi.encodeWithSignature("mint(address,uint256)", _addr, mint_amount));
 		if(!success){
 			revert("Mint failed");
 		}
 		last_fauceting[sender] = block.timestamp;
+		last_faucet_to[_addr] = block.timestamp;
 	}
 
 	function setFaucetToken(IERC20Upgradeable _token) external onlyRole(DEFAULT_ADMIN_ROLE) {
