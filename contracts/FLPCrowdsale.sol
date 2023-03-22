@@ -159,30 +159,23 @@ contract FLPCrowdsale is
         uint256 _paymentAmount
     ) internal view returns (bool success, uint256 value) {
         if (_payment == address(0)) {
-            return (true, _paymentAmount.div(getNativeRate()));
+            return (true, _paymentAmount.mul(Constant.PERCENTAGE_FRACTION).div(native_rate));
         } else if (_payment == address(payment_token)) {
-            return (true, _paymentAmount.div(getTokenRate()));
+            return (true, _paymentAmount.mul(Constant.PERCENTAGE_FRACTION).div(token_rate));
         } else {
             return (false, 0);
         }
     }
 	function getNeededAmount(address _payment, uint _icoAmount) public view returns (bool success, uint256 value){
         if (_payment == address(0)) {
-            return (true, _icoAmount.mul(getNativeRate()));
+            return (true, _icoAmount.mul(native_rate).div(Constant.PERCENTAGE_FRACTION));
         } else if (_payment == address(payment_token)) {
-            return (true, _icoAmount.mul(getTokenRate()));
+            return (true, _icoAmount.mul(token_rate).div(Constant.PERCENTAGE_FRACTION));
         } else {
             return (false, 0);
         }
 	}
 
-	function getNativeRate() public view returns (uint256){
-		return native_rate.div(Constant.PERCENTAGE_FRACTION);
-	}
-	
-	function getTokenRate() public view returns (uint256){
-		return token_rate.div(Constant.PERCENTAGE_FRACTION);
-	}
     receive() external payable {}
 
     function _authorizeUpgrade(
