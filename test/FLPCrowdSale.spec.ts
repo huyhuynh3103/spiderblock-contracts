@@ -53,7 +53,7 @@ describe("FLPCrowdSale", function () {
       const { tokenRate, crowdSaleContract } = await loadFixture(
         deployFLPCrowdSaleFixture
       );
-      expect(await crowdSaleContract.token_rate()).to.equal(
+      expect(await crowdSaleContract.getTokenRate()).to.equal(
         tokenRate * constants.PERCENTAGE_FRACTION
       );
     });
@@ -61,7 +61,7 @@ describe("FLPCrowdSale", function () {
       const { nativeRate, crowdSaleContract } = await loadFixture(
         deployFLPCrowdSaleFixture
       );
-      expect(await crowdSaleContract.native_rate()).to.equal(
+      expect(await crowdSaleContract.getNativeRate()).to.equal(
         nativeRate * constants.PERCENTAGE_FRACTION
       );
     });
@@ -174,7 +174,7 @@ describe("FLPCrowdSale", function () {
         await expect(crowdSaleContract.connect(caller).setNativeRate(nativeRate))
           .to.emit(crowdSaleContract, "NativeRateChanged")
           .withArgs(nativeRate);
-        expect(await crowdSaleContract.native_rate()).to.equal(nativeRate);
+        expect(await crowdSaleContract.getNativeRate()).to.equal(nativeRate);
       });
     });
     describe("setTokenRate(uint256)", function () {
@@ -195,7 +195,7 @@ describe("FLPCrowdSale", function () {
         await expect(crowdSaleContract.connect(caller).setTokenRate(tokenRate))
           .to.emit(crowdSaleContract, "TokenRateChanged")
           .withArgs(tokenRate);
-        expect(await crowdSaleContract.token_rate()).to.equal(tokenRate);
+        expect(await crowdSaleContract.getTokenRate()).to.equal(tokenRate);
       });
     });
     describe("setReceiverAddress(address)", function () {
@@ -322,7 +322,7 @@ describe("FLPCrowdSale", function () {
       });
       it("number of `ico_token` requested exceeds number of currently token amount => rejected", async function () {
         const tokenAmount = await icoTokenContract.balanceOf(crowdSaleContract.address);
-        const nativeAmountEnought = tokenAmount.mul(nativeRate*constants.PERCENTAGE_FRACTION).div(constants.PERCENTAGE_FRACTION);
+        const nativeAmountEnought = crowdSaleContract.getNeededAmount(ethers.constants.AddressZero, tokenAmount);
 		const nativeAmountExceeds = nativeAmountEnought.add(1000);
 		await expect(
           crowdSaleContract
@@ -369,7 +369,7 @@ describe("FLPCrowdSale", function () {
         const tokenICOAmount = await icoTokenContract.balanceOf(
           crowdSaleContract.address
         );
-        const pmtTokenAmountEnough = tokenICOAmount.mul(tokenRate*constants.PERCENTAGE_FRACTION).div(constants.PERCENTAGE_FRACTION);
+        const pmtTokenAmountEnough = await crowdSaleContract.getNeededAmount(paymentTokenContract.address,tokenICOAmount);
 		const pmtTokenAmountExceed = pmtTokenAmountEnough.add(1000);
         await expect(
           crowdSaleContract
