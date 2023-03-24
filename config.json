@@ -37,10 +37,10 @@
       ]
     },
     "Auction": {
-      "proxy": "0x7FDC4475c948eE3Ba33fE0b5f7FF8e4e63EBea63",
-      "implement": "0x9e4C6cC59894AbfA18fE78BF48101Cff0755e4AA",
+      "proxy": "0xbFc13f86EC845BED0c47903a986cc49588d80C1e",
+      "implement": "0x4F54188DF7b53889FFB6FD5a43DFF5D3D791635e",
       "params": [
-        "0x91e1272Adb3804745aA35619843349573A49ECe7",
+        "0x2a47d693800350301ad76a736519d776E306f1d3",
         "0x0986e90fdEFF82ad872E6240149F29AFf68F9119"
       ]
     },

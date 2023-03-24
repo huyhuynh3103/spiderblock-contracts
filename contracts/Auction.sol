@@ -13,10 +13,10 @@ import "./libraries/Roles.sol";
 import "./libraries/Constants.sol";
 
 contract Auction is
-    IERC721ReceiverUpgradeable,
     Initializable,
     AccessControlUpgradeable,
-    UUPSUpgradeable
+    UUPSUpgradeable,
+    IERC721ReceiverUpgradeable
 {
     using SafeMathUpgradeable for uint256;
     using SafeERC20Upgradeable for IERC20Upgradeable;
@@ -25,41 +25,6 @@ contract Auction is
     IERC20Upgradeable public token;
     uint public constant AUCTION_SERVICE_FEE_RATE = 3; // Percentage by 10_000
     uint public constant MINIMUM_BID_RATE = 110; // Percentage by 10_000
-
-    /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor() {
-        _disableInitializers();
-    }
-
-    function initialize(
-        IERC20Upgradeable _token,
-        IERC721Upgradeable _nft
-    ) public initializer {
-        token = _token;
-        nft = _nft;
-        __AccessControl_init();
-        __UUPSUpgradeable_init();
-
-        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
-        _grantRole(Roles.UPGRADER_ROLE, msg.sender);
-    }
-
-    function _authorizeUpgrade(
-        address newImplementation
-    ) internal override onlyRole(Roles.UPGRADER_ROLE) {}
-
-    function onERC721Received(
-        address,
-        address,
-        uint256,
-        bytes calldata
-    ) external pure override returns (bytes4) {
-        return (
-            bytes4(
-                keccak256("onERC721Received(address, address, uint256, bytes)")
-            )
-        );
-    }
 
     struct AuctionInfo {
         address auctioneer;
@@ -75,20 +40,38 @@ contract Auction is
         uint256 auctionId;
     }
 
-    AuctionInfo[] private auctions;
+    AuctionInfo[] private _auctions;
 
     modifier onlyAuctioneer(uint256 _auctionId) {
         require(
-            auctions[_auctionId].auctioneer == _msgSender() ||
+            _auctions[_auctionId].auctioneer == _msgSender() ||
                 hasRole(DEFAULT_ADMIN_ROLE, _msgSender()),
             "Not auctioneer or admin"
         );
         _;
     }
     modifier validAuctionId(uint256 _auctionId) {
-        require(_auctionId < auctions.length, "Invalid auction id");
+        require(_auctionId < _auctions.length, "Invalid auction id");
         _;
     }
+    
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() {
+        _disableInitializers();
+    }
+	function initialize(
+        IERC20Upgradeable _token,
+        IERC721Upgradeable _nft
+    ) public initializer {
+        token = _token;
+        nft = _nft;
+        __AccessControl_init();
+        __UUPSUpgradeable_init();
+
+        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _grantRole(Roles.UPGRADER_ROLE, msg.sender);
+    }
+
 
     function createAuction(
         uint256 _tokenId,
@@ -118,16 +101,16 @@ contract Auction is
             _endTime,
             false,
             true,
-            auctions.length
+            _auctions.length
         );
-        auctions.push(_auctionItem);
+        _auctions.push(_auctionItem);
     }
 
     function joinAuction(
         uint256 _auctionId,
         uint256 _bid
     ) external validAuctionId(_auctionId) {
-        AuctionInfo memory _auctionItem = auctions[_auctionId];
+        AuctionInfo memory _auctionItem = _auctions[_auctionId];
         require(
             block.timestamp >= _auctionItem.startTime,
             "Auction has not started"
@@ -162,13 +145,13 @@ contract Auction is
         _auctionItem.lastBid = _bid;
 
         // update those changes to storage
-        auctions[_auctionId] = _auctionItem;
+        _auctions[_auctionId] = _auctionItem;
     }
 
     function endAuction(
         uint256 _auctionId
     ) external validAuctionId(_auctionId) onlyAuctioneer(_auctionId) {
-        AuctionInfo memory _auctionItem = auctions[_auctionId];
+        AuctionInfo memory _auctionItem = _auctions[_auctionId];
         require(_auctionItem.completed == false, "Auction is already ended");
         require(_auctionItem.active, "Auction is not active");
 
@@ -192,13 +175,13 @@ contract Auction is
         // update info
         _auctionItem.completed = true;
         _auctionItem.active = false;
-        auctions[_auctionId] = _auctionItem;
+        _auctions[_auctionId] = _auctionItem;
     }
 
     function cancelAuction(
         uint256 _auctionId
     ) external validAuctionId(_auctionId) onlyAuctioneer(_auctionId) {
-        AuctionInfo memory _auctionItem = auctions[_auctionId];
+        AuctionInfo memory _auctionItem = _auctions[_auctionId];
         require(_auctionItem.completed == false, "Auction is already ended");
         require(_auctionItem.active, "Auction is not active");
 
@@ -216,22 +199,23 @@ contract Auction is
 
         _auctionItem.completed = true;
         _auctionItem.active = false;
+		_auctions[_auctionId] = _auctionItem;
     }
 
     function getAuction(
         uint256 _auctionId
     ) public view returns (AuctionInfo memory) {
-        return auctions[_auctionId];
+        return _auctions[_auctionId];
     }
 
     function getAuctionByState(
         bool _active
     ) public view returns (AuctionInfo[] memory) {
-        uint auctionsLength = auctions.length;
+        uint auctionsLength = _auctions.length;
         uint resultLength = 0;
         for (uint i = 0; i < auctionsLength; ) {
             unchecked {
-                if (auctions[i].active == _active) resultLength++;
+                if (_auctions[i].active == _active) resultLength++;
                 ++i;
             }
         }
@@ -240,8 +224,8 @@ contract Auction is
         uint j = 0;
         for (uint256 i = 0; i < auctionsLength; ) {
             unchecked {
-                if (auctions[i].active == _active) {
-                    results[j] = auctions[i];
+                if (_auctions[i].active == _active) {
+                    results[j] = _auctions[i];
                     j++;
                 }
                 i++;
@@ -256,4 +240,21 @@ contract Auction is
 	function setToken(IERC20Upgradeable _token) external onlyRole(DEFAULT_ADMIN_ROLE){
 		token = _token;
 	}
+
+    function onERC721Received(
+        address,
+        address,
+        uint256,
+        bytes calldata
+    ) external pure override returns (bytes4) {
+        return
+            bytes4(
+                keccak256("onERC721Received(address,address,uint256,bytes)")
+            );
+    }
+    
+	
+	function _authorizeUpgrade(
+        address newImplementation
+    ) internal override onlyRole(Roles.UPGRADER_ROLE) {}
 }
