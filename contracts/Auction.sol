@@ -20,8 +20,9 @@ contract Auction is
 {
     using SafeMathUpgradeable for uint256;
     using SafeERC20Upgradeable for IERC20Upgradeable;
-    IERC721Upgradeable private nft;
-    IERC20Upgradeable private token;
+
+    IERC721Upgradeable public nft;
+    IERC20Upgradeable public token;
     uint public constant AUCTION_SERVICE_FEE_RATE = 3; // Percentage by 10_000
     uint public constant MINIMUM_BID_RATE = 110; // Percentage by 10_000
 
@@ -248,4 +249,11 @@ contract Auction is
         }
         return results;
     }
+	
+	function setNft(IERC721Upgradeable _nft) external onlyRole(DEFAULT_ADMIN_ROLE){
+		nft = _nft;
+	}
+	function setToken(IERC20Upgradeable _token) external onlyRole(DEFAULT_ADMIN_ROLE){
+		token = _token;
+	}
 }

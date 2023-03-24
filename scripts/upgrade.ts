@@ -1,7 +1,7 @@
 import { upgradeProxy } from "../helpers/upgrade";
 
 async function main(): Promise<void> {
-	upgradeProxy("FLPCrowdsale", "0x5144DcC0eE9863afCC65D75578b8F424Faf46A53")
+	upgradeProxy("Auction", "0x7FDC4475c948eE3Ba33fE0b5f7FF8e4e63EBea63")
 }
 
 main().catch((error)=>{

@@ -38,7 +38,7 @@
     },
     "Auction": {
       "proxy": "0x7FDC4475c948eE3Ba33fE0b5f7FF8e4e63EBea63",
-      "implement": "0x084b6be4cB5079217b96Ef88872Dc66f294aBEd9",
+      "implement": "0x9e4C6cC59894AbfA18fE78BF48101Cff0755e4AA",
       "params": [
         "0x91e1272Adb3804745aA35619843349573A49ECe7",
         "0x0986e90fdEFF82ad872E6240149F29AFf68F9119"
